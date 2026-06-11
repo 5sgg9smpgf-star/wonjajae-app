@@ -52,11 +52,9 @@ header h1 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
 <header>
   <h1>📦 원자재 관리</h1>
   <div class="sw">
-    <input type="search" id="si" placeholder="품명, 규격, 구입처 검색..." oninput="render()">
+    <input type="search" id="si" placeholder="품명·규격·구입처" oninput="render()" style="flex:2">
+    <input type="search" id="su" placeholder="사용용도" oninput="render()" style="flex:1">
     <select id="sf" onchange="render()"><option value="">전체</option></select>
-  </div>
-  <div class="sw" style="margin-top:6px">
-    <input type="search" id="su" placeholder="사용용도 검색..." oninput="render()">
   </div>
   <div class="sortw">
     <button class="sb active" data-field="none" onclick="toggleSort(this)">기본순</button>
