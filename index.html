@@ -55,6 +55,9 @@ header h1 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
     <input type="search" id="si" placeholder="품명, 규격, 구입처 검색..." oninput="render()">
     <select id="sf" onchange="render()"><option value="">전체</option></select>
   </div>
+  <div class="sw" style="margin-top:6px">
+    <input type="search" id="su" placeholder="사용용도 검색..." oninput="render()">
+  </div>
   <div class="sortw">
     <button class="sb active" data-field="none" onclick="toggleSort(this)">기본순</button>
     <button class="sb" data-field="iy" data-dir="" data-label="이형력순" onclick="toggleSort(this)">이형력순</button>
@@ -125,11 +128,13 @@ function init(){
 }
 function render(){
   const q=document.getElementById('si').value.trim().toLowerCase();
+  const qu=document.getElementById('su').value.trim().toLowerCase();
   const sup=document.getElementById('sf').value;
   let f=allData.filter(d=>{
     const ms=!sup||d.supplier===sup;
     const mq=!q||[d.product,d.spec,d.supplier].some(v=>v&&v.toLowerCase().includes(q));
-    return ms&&mq;
+    const mu=!qu||(d.usage&&d.usage.toLowerCase().includes(qu));
+    return ms&&mq&&mu;
   });
   if(sorts.length){
     const firstParts=sorts[0].split('_');firstParts.pop();const firstKey=km[firstParts.join('_')];
