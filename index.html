@@ -132,17 +132,10 @@ function render(){
     return ms&&mq;
   });
   if(sorts.length){
-    const activeFields=new Set(sorts.map(s=>{const p=s.split('_');p.pop();return km[p.join('_')];}));
-    f=f.filter(d=>[...activeFields].every(key=>pn(d[key])!==null));
-    f=[...f].sort((a,b)=>{
-      for(const s of sorts){
-        const parts=s.split('_');const dir=parts.pop();const field=parts.join('_');const key=km[field];
-        const av=pn(a[key]),bv=pn(b[key]);
-        const r=dir==='asc'?av-bv:bv-av;
-        if(r!==0)return r;
-      }
-      return 0;
-    });
+    const firstParts=sorts[0].split('_');firstParts.pop();const firstKey=km[firstParts.join('_')];
+    f=f.filter(d=>pn(d[firstKey])!==null);
+    const lastSort=sorts[sorts.length-1];const lp=lastSort.split('_');const ldir=lp.pop();const lkey=km[lp.join('_')];
+    f=[...f].sort((a,b)=>{const av=pn(a[lkey]),bv=pn(b[lkey]);return ldir==='asc'?av-bv:bv-av;});
   }
   document.getElementById('stats').textContent=`총 ${allData.length}개 중 ${f.length}개 표시`;
   const list=document.getElementById('list');
