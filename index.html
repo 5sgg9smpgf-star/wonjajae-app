@@ -123,8 +123,8 @@ function render(){
     return ms&&mq;
   });
   if(sorts.length){
-    const forceFields=new Set(sorts.map(s=>{const p=s.split('_');p.pop();return p.join('_');}).filter(k=>k!=='price').map(k=>km[k]));
-    if(forceFields.size) f=f.filter(d=>[...forceFields].every(key=>pn(d[key])!==null));
+    const activeFields=new Set(sorts.map(s=>{const p=s.split('_');p.pop();return km[p.join('_')];}));
+    f=f.filter(d=>[...activeFields].every(key=>pn(d[key])!==null));
     const scoreMap=new Map();
     f.forEach(item=>scoreMap.set(item,0));
     for(const s of sorts){
