@@ -155,6 +155,7 @@ function render(){
       +'<div class="ch"><span class="cno">No.'+d.no+'</span><span class="cp">'+(d.product||'-')+'</span></div>'
       +'<div class="csup">'+(d.supplier||'')+'</div>'
       +(d.spec?'<div class="cspec">'+d.spec+'</div>':'')
+      +(sqms?'<div style="font-size:14px;color:#888;margin-top:3px">'+sqms+'</div>':'')
       +((d.iy_spec||d.iy_avg||d.ja_spec||d.ja_avg||d.je_spec||d.je_avg)?
         '<table style="margin-top:8px;font-size:13px;border-collapse:collapse;width:auto">'
         +'<tr style="background:#f0f4ff"><th style="padding:4px 10px;text-align:left;color:#1a56db;font-weight:600;border:1px solid #dde5ff">항목</th><th style="padding:4px 10px;text-align:center;color:#1a56db;font-weight:600;border:1px solid #dde5ff">SPEC</th><th style="padding:4px 10px;text-align:center;color:#1a56db;font-weight:600;border:1px solid #dde5ff">실측</th></tr>'
