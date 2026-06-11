@@ -159,13 +159,17 @@ function render(){
     const sqm=calcSqm(d.spec,d.price);const sqms=sqm?sqm.toLocaleString('ko-KR')+'원/㎡':'';
     return '<div class="card" onclick="openM('+idx+')">'
       +'<div class="ch"><span class="cno">No.'+d.no+'</span><span class="cp">'+(d.product||'-')+'</span></div>'
-      +'<div class="csup">'+(d.supplier||'')+(d.contact_name?' · '+d.contact_name:'')+'</div>'
+      +'<div class="csup">'+(d.supplier||'')+'</div>'
       +(d.spec?'<div class="cspec">'+d.spec+'</div>':'')
       +(ps?'<div class="cprice" style="margin-top:6px">'+ps+'</div>':'')
       +(sqms?'<div style="font-size:12px;color:#888;margin-top:2px">'+sqms+'</div>':'')
-      +(d.iy_spec||d.iy_avg?'<div style="font-size:12px;color:#555;margin-top:4px">이형력 '+( d.iy_spec?'SPEC:'+d.iy_spec+' ':'' )+(d.iy_avg?'실측:'+d.iy_avg:'')+'</div>':'')
-      +(d.ja_spec||d.ja_avg?'<div style="font-size:12px;color:#555;margin-top:2px">점착력 '+(d.ja_spec?'SPEC:'+d.ja_spec+' ':'')+(d.ja_avg?'실측:'+d.ja_avg:'')+'</div>':'')
-      +(d.je_spec||d.je_avg?'<div style="font-size:12px;color:#555;margin-top:2px">접착력 '+(d.je_spec?'SPEC:'+d.je_spec+' ':'')+(d.je_avg?'실측:'+d.je_avg:'')+'</div>':'')
+      +((d.iy_spec||d.iy_avg||d.ja_spec||d.ja_avg||d.je_spec||d.je_avg)?
+        '<table style="margin-top:8px;font-size:12px;border-collapse:collapse;width:100%">'
+        +'<tr style="background:#f0f4ff"><th style="padding:4px 8px;text-align:left;color:#1a56db;font-weight:600;border:1px solid #dde5ff">항목</th><th style="padding:4px 8px;text-align:center;color:#1a56db;font-weight:600;border:1px solid #dde5ff">SPEC</th><th style="padding:4px 8px;text-align:center;color:#1a56db;font-weight:600;border:1px solid #dde5ff">실측</th></tr>'
+        +(d.iy_spec||d.iy_avg?'<tr><td style="padding:4px 8px;border:1px solid #eee">이형력</td><td style="padding:4px 8px;text-align:center;border:1px solid #eee">'+(d.iy_spec||'-')+'</td><td style="padding:4px 8px;text-align:center;border:1px solid #eee">'+(d.iy_avg||'-')+'</td></tr>':'')
+        +(d.ja_spec||d.ja_avg?'<tr style="background:#fafafa"><td style="padding:4px 8px;border:1px solid #eee">점착력</td><td style="padding:4px 8px;text-align:center;border:1px solid #eee">'+(d.ja_spec||'-')+'</td><td style="padding:4px 8px;text-align:center;border:1px solid #eee">'+(d.ja_avg||'-')+'</td></tr>':'')
+        +(d.je_spec||d.je_avg?'<tr><td style="padding:4px 8px;border:1px solid #eee">접착력</td><td style="padding:4px 8px;text-align:center;border:1px solid #eee">'+(d.je_spec||'-')+'</td><td style="padding:4px 8px;text-align:center;border:1px solid #eee">'+(d.je_avg||'-')+'</td></tr>':'')
+        +'</table>':'')
       +'</div>';
   }).join('');
 }
