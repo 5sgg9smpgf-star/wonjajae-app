@@ -163,7 +163,9 @@ function render(){
       +(d.spec?'<div class="cspec">'+d.spec+'</div>':'')
       +(ps?'<div class="cprice" style="margin-top:6px">'+ps+'</div>':'')
       +(sqms?'<div style="font-size:12px;color:#888;margin-top:2px">'+sqms+'</div>':'')
-      +(tags.length?'<div class="ctags">'+tags.map(t=>'<span class="tag">'+t+'</span>').join('')+'</div>':'')
+      +(d.iy_spec||d.iy_avg?'<div style="font-size:12px;color:#555;margin-top:4px">이형력 '+( d.iy_spec?'SPEC:'+d.iy_spec+' ':'' )+(d.iy_avg?'실측:'+d.iy_avg:'')+'</div>':'')
+      +(d.ja_spec||d.ja_avg?'<div style="font-size:12px;color:#555;margin-top:2px">점착력 '+(d.ja_spec?'SPEC:'+d.ja_spec+' ':'')+(d.ja_avg?'실측:'+d.ja_avg:'')+'</div>':'')
+      +(d.je_spec||d.je_avg?'<div style="font-size:12px;color:#555;margin-top:2px">접착력 '+(d.je_spec?'SPEC:'+d.je_spec+' ':'')+(d.je_avg?'실측:'+d.je_avg:'')+'</div>':'')
       +'</div>';
   }).join('');
 }
