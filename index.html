@@ -168,7 +168,20 @@ function render(){
 function openM(idx){
   const d=allData[idx];const hf=d.iy_spec||d.iy_avg||d.ja_spec||d.ja_avg||d.je_spec||d.je_avg;const ps=fp(d.price);
   const sqm=calcSqm(d.spec,d.price);const sqms=sqm?sqm.toLocaleString('ko-KR')+'원/㎡':'';
-  document.getElementById('mc').innerHTML='<h2>'+(d.product||'-')+'</h2><div class="mspec">'+(d.spec||'')+'</div>'+(ps?'<div class="mprice">'+ps+(sqms?' <span style="font-size:14px;font-weight:400;color:#999">('+sqms+')</span>':'')+'</div>':'')+'<table class="it"><tr><td>No.</td><td>'+d.no+'</td></tr><tr><td>구입처</td><td>'+(d.supplier||'-')+'</td></tr><tr><td>담당자</td><td>'+(d.contact_name||'-')+'</td></tr><tr><td>연락처</td><td>'+(d.contact_phone?'<a class="pl" href="tel:'+d.contact_phone+'">'+d.contact_phone+'</a>':'-')+'</td></tr>'+(d.usage?'<tr><td>사용용도</td><td>'+d.usage+'</td></tr>':'')+(d.note?'<tr><td>비고</td><td>'+d.note+'</td></tr>':'')+'</table>'+(hf?'<div class="stitle">물성 데이터 (g.f)</div><table class="ft"><tr><th>항목</th><th>SPEC</th><th>실측(AVG)</th></tr>'+(d.iy_spec||d.iy_avg?'<tr><td>이형력</td><td>'+(d.iy_spec||'-')+'</td><td>'+(d.iy_avg||'-')+'</td></tr>':'')+(d.ja_spec||d.ja_avg?'<tr><td>점착력</td><td>'+(d.ja_spec||'-')+'</td><td>'+(d.ja_avg||'-')+'</td></tr>':'')+(d.je_spec||d.je_avg?'<tr><td>접착력</td><td>'+(d.je_spec||'-')+'</td><td>'+(d.je_avg||'-')+'</td></tr>':'')+'</table>':'');
+  document.getElementById('mc').innerHTML=''
+    +'<h2>'+(d.product||'-')+'</h2>'
+    +'<table class="it">'
+    +'<tr><td>No.</td><td>'+d.no+'</td></tr>'
+    +'<tr><td>구입처</td><td>'+(d.supplier||'-')+'</td></tr>'
+    +'<tr><td>담당자</td><td>'+(d.contact_name||'-')+'</td></tr>'
+    +'<tr><td>연락처</td><td>'+(d.contact_phone?'<a class="pl" href="tel:'+d.contact_phone+'">'+d.contact_phone+'</a>':'-')+'</td></tr>'
+    +(d.spec?'<tr><td>규격</td><td>'+d.spec+'</td></tr>':'')
+    +(ps?'<tr><td>가격</td><td><span style="font-weight:700;color:#e53e3e">'+ps+'</span></td></tr>':'')
+    +(sqms?'<tr><td>㎡단가</td><td><span style="font-weight:700;color:#e53e3e">'+sqms+'</span></td></tr>':'')
+    +(d.usage?'<tr><td>사용용도</td><td>'+d.usage+'</td></tr>':'')
+    +(d.note?'<tr><td>비고</td><td>'+d.note+'</td></tr>':'')
+    +'</table>'
+    +(hf?'<div class="stitle">물성 데이터 (g.f)</div><table class="ft"><tr><th>항목</th><th>SPEC</th><th>실측(AVG)</th></tr>'+(d.iy_spec||d.iy_avg?'<tr><td>이형력</td><td>'+(d.iy_spec||'-')+'</td><td>'+(d.iy_avg||'-')+'</td></tr>':'')+(d.ja_spec||d.ja_avg?'<tr><td>점착력</td><td>'+(d.ja_spec||'-')+'</td><td>'+(d.ja_avg||'-')+'</td></tr>':'')+(d.je_spec||d.je_avg?'<tr><td>접착력</td><td>'+(d.je_spec||'-')+'</td><td>'+(d.je_avg||'-')+'</td></tr>':'')+'</table>':'');
   document.getElementById('ov').classList.add('open');
 }
 function closeOv(e){if(e.target===document.getElementById('ov'))document.getElementById('ov').classList.remove('open');}
