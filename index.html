@@ -128,7 +128,7 @@ function render(){
   const sup=document.getElementById('sf').value;
   let f=allData.filter(d=>{
     const ms=!sup||d.supplier===sup;
-    const mq=!q||[d.product,d.spec,d.supplier,d.usage,d.note].some(v=>v.toLowerCase().includes(q));
+    const mq=!q||[d.product,d.spec,d.supplier].some(v=>v&&v.toLowerCase().includes(q));
     return ms&&mq;
   });
   if(sorts.length){
