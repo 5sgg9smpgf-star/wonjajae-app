@@ -113,6 +113,11 @@ function updateBadges(){
 function setSort(el,k){
   if(k==='none'){sorts=[];updateBadges();render();return;}
   document.querySelector('[data-k="none"]').classList.remove('active');
+  // 같은 항목 반대 방향 제거 (예: price_asc 선택시 price_desc 제거)
+  const parts=k.split('_');const dir=parts.pop();const field=parts.join('_');
+  const opposite=field+'_'+(dir==='asc'?'desc':'asc');
+  const oppIdx=sorts.indexOf(opposite);
+  if(oppIdx>=0) sorts.splice(oppIdx,1);
   const idx=sorts.indexOf(k);
   if(idx>=0) sorts.splice(idx,1);
   else sorts.push(k);
