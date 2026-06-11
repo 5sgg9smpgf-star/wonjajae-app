@@ -123,9 +123,10 @@ function render(){
     return ms&&mq;
   });
   if(sorts.length){
-    const n=f.length;
+    const fields=new Set(sorts.map(s=>{const p=s.split('_');p.pop();return km[p.join('_')];}));
+    f=f.filter(d=>[...fields].every(key=>pn(d[key])!==null));
     const scoreMap=new Map();
-    f.forEach((_,i)=>scoreMap.set(f[i],0));
+    f.forEach(item=>scoreMap.set(item,0));
     for(const s of sorts){
       const parts=s.split('_');const dir=parts.pop();const field=parts.join('_');const key=km[field];
       const sorted=[...f].sort((a,b)=>{
