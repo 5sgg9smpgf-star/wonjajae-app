@@ -125,18 +125,15 @@ function render(){
   if(sorts.length){
     const activeFields=new Set(sorts.map(s=>{const p=s.split('_');p.pop();return km[p.join('_')];}));
     f=f.filter(d=>[...activeFields].every(key=>pn(d[key])!==null));
-    const scoreMap=new Map();
-    f.forEach(item=>scoreMap.set(item,0));
-    for(const s of sorts){
-      const parts=s.split('_');const dir=parts.pop();const field=parts.join('_');const key=km[field];
-      const sorted=[...f].sort((a,b)=>{
+    f=[...f].sort((a,b)=>{
+      for(const s of sorts){
+        const parts=s.split('_');const dir=parts.pop();const field=parts.join('_');const key=km[field];
         const av=pn(a[key]),bv=pn(b[key]);
-        if(av===null&&bv===null)return 0;if(av===null)return 1;if(bv===null)return -1;
-        return dir==='asc'?av-bv:bv-av;
-      });
-      sorted.forEach((item,rank)=>scoreMap.set(item,(scoreMap.get(item)||0)+rank));
-    }
-    f=[...f].sort((a,b)=>scoreMap.get(a)-scoreMap.get(b));
+        const r=dir==='asc'?av-bv:bv-av;
+        if(r!==0)return r;
+      }
+      return 0;
+    });
   }
   document.getElementById('stats').textContent=`총 ${allData.length}개 중 ${f.length}개 표시`;
   const list=document.getElementById('list');
