@@ -123,18 +123,19 @@ function render(){
     return ms&&mq;
   });
   if(sorts.length){
-    f=[...f].sort((a,b)=>{
-      for(const s of sorts){
-        const parts=s.split('_');const dir=parts.pop();const field=parts.join('_');const key=km[field];
+    const n=f.length;
+    const scoreMap=new Map();
+    f.forEach((_,i)=>scoreMap.set(f[i],0));
+    for(const s of sorts){
+      const parts=s.split('_');const dir=parts.pop();const field=parts.join('_');const key=km[field];
+      const sorted=[...f].sort((a,b)=>{
         const av=pn(a[key]),bv=pn(b[key]);
-        if(av===null&&bv===null)continue;
-        if(av===null)return 1;
-        if(bv===null)return -1;
-        const r=dir==='asc'?av-bv:bv-av;
-        if(r!==0)return r;
-      }
-      return 0;
-    });
+        if(av===null&&bv===null)return 0;if(av===null)return 1;if(bv===null)return -1;
+        return dir==='asc'?av-bv:bv-av;
+      });
+      sorted.forEach((item,rank)=>scoreMap.set(item,(scoreMap.get(item)||0)+rank));
+    }
+    f=[...f].sort((a,b)=>scoreMap.get(a)-scoreMap.get(b));
   }
   document.getElementById('stats').textContent=`총 ${allData.length}개 중 ${f.length}개 표시`;
   const list=document.getElementById('list');
