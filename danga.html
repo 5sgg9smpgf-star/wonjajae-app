@@ -21,6 +21,7 @@ header h1 { font-size: 1.05rem; }
 .card-price { font-weight: bold; color: #1a3a5c; font-size: 0.95rem; white-space: nowrap; }
 .card-meta { display: flex; gap: 10px; font-size: 0.78rem; color: #777; flex-wrap: wrap; }
 .card-meta .label { color: #bbb; margin-right: 2px; }
+.card-spec { font-size: 0.92rem; font-weight: 700; color: #333; }
 .empty { text-align: center; padding: 50px; color: #bbb; }
 @media (min-width: 768px) {
   header { padding: 16px 24px; }
@@ -1528,7 +1529,7 @@ function render() {
     cards += "</div>";
     cards += "<div class=\"card-meta\">";
     if (d.code) cards += "<span><span class=\"label\">코드</span>" + d.code + "</span>";
-    if (d.spec) cards += "<span><span class=\"label\">규격</span>" + d.spec + "</span>";
+    if (d.spec) cards += "<span><span class=\"label\">규격</span><span class=\"card-spec\">" + d.spec + "</span></span>";
     if (d.unit) cards += "<span><span class=\"label\">단위</span>" + d.unit + "</span>";
     cards += "</div></div>";
     rows += "<tr>";
