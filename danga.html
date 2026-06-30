@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>상아프론테크 단가 리스트</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif; background: #f0f4f8; color: #222; font-size: 14px; }
+
+/* 헤더 */
+header { background: #1a3a5c; color: white; padding: 14px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; }
+header h1 { font-size: 1.05rem; }
+.badge { background: #e8f0fe; color: #1a3a5c; border-radius: 12px; padding: 2px 9px; font-size: 0.78rem; font-weight: bold; white-space: nowrap; }
+
+/* 검색/버튼 */
+.toolbar { background: white; padding: 10px 12px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #e0e6ed; position: sticky; top: 48px; z-index: 9; }
+#searchInput { flex: 1; padding: 9px 12px; border: 1.5px solid #c7d0dc; border-radius: 8px; font-size: 0.92rem; outline: none; font-family: inherit; min-width: 0; }
+#searchInput:focus { border-color: #1a3a5c; }
+.btn { padding: 9px 13px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: bold; font-family: inherit; white-space: nowrap; }
+.btn-add { background: #2e7d32; color: white; }
+.btn-csv { background: #1a3a5c; color: white; }
+
+/* 정보 */
+.info { padding: 6px 12px; font-size: 0.8rem; color: #666; background: #f8fafc; border-bottom: 1px solid #e8ecf0; }
+
+/* 카드 리스트 (모바일) */
+.card-list { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.card { background: white; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.card-name { font-weight: 600; font-size: 0.95rem; flex: 1; margin-right: 8px; line-height: 1.3; }
+.card-price { font-weight: bold; color: #1a3a5c; font-size: 0.95rem; white-space: nowrap; }
+.card-meta { display: flex; gap: 10px; font-size: 0.78rem; color: #777; margin-bottom: 8px; flex-wrap: wrap; }
+.card-meta span { display: flex; gap: 3px; }
+.card-meta .label { color: #aaa; }
+.card-calc { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.card-calc input { width: 80px; padding: 6px 8px; border: 1.5px solid #c7d0dc; border-radius: 6px; font-size: 0.88rem; text-align: right; font-family: inherit; outline: none; }
+.card-calc input:focus { border-color: #1a3a5c; }
+.card-calc .eq { color: #999; }
+.card-calc .tot { font-weight: bold; color: #1a3a5c; font-size: 0.92rem; }
+.card-btns { display: flex; gap: 6px; justify-content: flex-end; }
+.btn-edit { background: #e65100; color: white; font-size: 0.78rem; padding: 5px 12px; border-radius: 6px; }
+.btn-del { background: #c62828; color: white; font-size: 0.78rem; padding: 5px 12px; border-radius: 6px; }
+
+/* 데스크톱 테이블 */
+@media (min-width: 768px) {
+  header { padding: 16px 24px; }
+  header h1 { font-size: 1.2rem; }
+  .toolbar { padding: 12px 24px; top: 56px; }
+  .info { padding: 7px 24px; }
+  .card-list { display: none; }
+  .table-wrap { display: block; padding: 16px 24px 40px; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,0.07); }
+  thead tr { background: #1a3a5c; color: white; }
+  th { padding: 10px 8px; text-align: center; font-size: 0.83rem; white-space: nowrap; font-weight: 600; }
+  td { padding: 8px; border-bottom: 1px solid #eef0f4; vertical-align: middle; font-size: 0.85rem; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f5f8ff; }
+  .tc-no { text-align: center; color: #999; width: 40px; }
+  .tc-code { color: #666; font-size: 0.8rem; }
+  .tc-name { font-weight: 500; }
+  .tc-spec { color: #666; font-size: 0.8rem; }
+  .tc-unit { text-align: center; }
+  .tc-price { text-align: right; font-weight: bold; color: #1a3a5c; }
+  .tc-calc { white-space: nowrap; }
+  .tc-act { text-align: center; white-space: nowrap; }
+  .tqty { width: 60px; padding: 3px 5px; border: 1px solid #c7d0dc; border-radius: 5px; text-align: right; font-size: 0.82rem; }
+  .ttot { color: #1a3a5c; font-weight: bold; margin-left: 4px; }
+}
+@media (max-width: 767px) {
+  .table-wrap { display: none; }
+}
+
+.empty { text-align: center; padding: 50px; color: #bbb; }
+
+/* 모달 */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 50; align-items: flex-end; justify-content: center; }
+.overlay.show { display: flex; }
+.modal { background: white; border-radius: 16px 16px 0 0; padding: 24px 20px; width: 100%; max-width: 480px; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); }
+@media (min-width: 480px) {
+  .overlay { align-items: center; }
+  .modal { border-radius: 12px; max-width: 420px; }
+}
+.modal h2 { font-size: 1rem; color: #1a3a5c; margin-bottom: 16px; }
+.frow { margin-bottom: 11px; }
+.frow label { display: block; font-size: 0.8rem; color: #555; margin-bottom: 4px; font-weight: 600; }
+.frow input { width: 100%; padding: 10px 12px; border: 1.5px solid #c7d0dc; border-radius: 8px; font-size: 1rem; font-family: inherit; outline: none; }
+.frow input:focus { border-color: #1a3a5c; }
+.mact { display: flex; gap: 8px; margin-top: 16px; }
+.btn-cancel { background: #eee; color: #333; flex: 1; padding: 12px; font-size: 0.95rem; border-radius: 8px; }
+.btn-save { background: #1a3a5c; color: white; flex: 2; padding: 12px; font-size: 0.95rem; border-radius: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>상아프론테크 단가 리스트</h1>
+  <span class="badge" id="badge">로딩중...</span>
+</header>
+<div class="toolbar">
+  <input id="searchInput" type="text" placeholder="품명, 자재코드 검색..." oninput="render()">
+  <button class="btn btn-add" onclick="openAdd()">추가</button>
+  <button class="btn btn-csv" onclick="exportCSV()">CSV</button>
+</div>
+<div class="info" id="info"></div>
+
+<!-- 모바일: 카드 -->
+<div class="card-list" id="cardList"></div>
+<div class="empty" id="empty" style="display:none">검색 결과가 없습니다.</div>
+
+<!-- 데스크톱: 테이블 -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>NO</th><th>자재코드</th><th>품명</th><th>규격</th><th>단위</th><th>단가(원)</th><th>수량→금액</th><th>관리</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<!-- 추가/수정 모달 -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="mtitle">품목 추가</h2>
+    <div class="frow"><label>자재코드</label><input id="fCode" type="text"></div>
+    <div class="frow"><label>품명 *</label><input id="fName" type="text"></div>
+    <div class="frow"><label>규격</label><input id="fSpec" type="text"></div>
+    <div class="frow"><label>단위</label><input id="fUnit" type="text"></div>
+    <div class="frow"><label>단가(원) *</label><input id="fPrice" type="number" min="0" step="0.1" inputmode="decimal"></div>
+    <div class="mact">
+      <button class="btn btn-cancel" onclick="closeModal()">취소</button>
+      <button class="btn btn-save" onclick="save()">저장</button>
+    </div>
+  </div>
+</div>
+
+<script id="rawdata" type="application/json">
+[
+  {
+    "no": 1,
+    "code": "3049272",
+    "name": "#94 PRIMER",
+    "spec": "3.78L",
+    "unit": "통",
+    "price": 247000.0
+  },
+  {
+    "no": 2,
+    "code": "2121849",
+    "name": "BUSH ROTATION(SHEET TYPE)",
+    "spec": "34.3*27.7*0.8T",
+    "unit": "EA",
+    "price": 154.2
+  },
+  {
+    "no": 3,
+    "code": "2121717",
+    "name": "BUSH SUB(SHEET TYPE)",
+    "spec": "28.2*16.1*0.7T",
+    "unit": "EA",
+    "price": 80.0
+  },
+  {
+    "no": 4,
+    "code": "SS21183",
+    "name": "CNT SHEET",
+    "spec": "3.5*0.25T",
+    "unit": "M",
+    "price": 75.0
+  },
+  {
+    "no": 5,
+    "code": "SS21184",
+    "name": "CNT SHEET",
+    "spec": "5.5*0.25T",
+    "unit": "M",
+    "price": 70.0
+  },
+  {
+    "no": 6,
+    "code": "2138061",
+    "name": "EZI 필터",
+    "spec": "Ø6.65",
+    "unit": "EA",
+    "price": 15.2
+  },
+  {
+    "no": 7,
+    "code": "2131031",
+    "name": "EZI 필터주사기(1cc)",
+    "spec": "Ø2.3",
+    "unit": "EA",
+    "price": 15.2
+  },
+  {
+    "no": 8,
+    "code": "A570112",
+    "name": "FELT CLEAN TONER(내열170g)",
+    "spec": "17*9*5.5t",
+    "unit": "EA",
+    "price": 8.0
+  },
+  {
+    "no": 9,
+    "code": "A442669",
+    "name": "FEP FILM 절단",
+    "spec": "100mm*0.3T*1M",
+    "unit": "M",
+    "price": 140.0
+  },
+  {
+    "no": 10,
+    "code": "A442623",
+    "name": "FEP FILM 절단",
+    "spec": "13mm*0.2t*1M",
+    "unit": "M",
+    "price": 24.0
+  },
+  {
+    "no": 11,
+    "code": "A442624",
+    "name": "FEP FILM 절단",
+    "spec": "15mm*0.2t*1M",
+    "unit": "M",
+    "price": 22.0
+  },
+  {
+    "no": 12,
+    "code": "A442666",
+    "name": "FEP FILM 절단",
+    "spec": "20mm*0.2T*1M",
+    "unit": "M",
+    "price": 24.0
+  },
+  {
+    "no": 13,
+    "code": "A442668",
+    "name": "FEP FILM 절단",
+    "spec": "25mm*0.3T*1M",
+    "unit": "M",
+    "price": 36.0
+  },
+  {
+    "no": 14,
+    "code": "등록X",
+    "name": "FEP FILM 절단",
+    "spec": "25mm*0.3T*1M",
+    "unit": "M",
+    "price": 82.0
+  },
+  {
+    "no": 15,
+    "code": "A442625",
+    "name": "FEP FILM 절단",
+    "spec": "35mm*0.2t*1M",
+    "unit": "M",
+    "price": 22.0
+  },
+  {
+    "no": 16,
+    "code": "",
+    "name": "FEP FILM 절단",
+    "spec": "35mm*0.3T*1M",
+    "unit": "M",
+    "price": 24.0
+  },
+  {
+    "no": 17,
+    "code": "A442641",
+    "name": "FEP FILM 절단",
+    "spec": "39mm*0.2T*1M",
+    "unit": "M",
+    "price": 24.0
+  },
+  {
+    "no": 18,
+    "code": "A442663",
+    "name": "FEP FILM 절단",
+    "spec": "50mm*0.2T*1M",
+    "unit": "M",
+    "price": 24.0
+  },
+  {
+    "no": 19,
+    "code": "A442617",
+    "name": "FEP FILM 절단",
+    "spec": "65mm*0.2t*1M",
+    "unit": "M",
+    "price": 24.0
+  },
+  {
+    "no": 20,
+    "code": "A442619",
+    "name": "FEP FILM 절단",
+    "spec": "95mm*0.2t*1M",
+    "unit": "M",
+    "price": 47.0
+  },
+  {
+    "no": 21,
+    "code": "21311I6",
+    "name": "FILTER",
+    "spec": "Ø13.4",
+    "unit": "EA",
+    "price": 27.9
+  },
+  {
+    "no": 22,
+    "code": "2138015",
+    "name": "FILTER",
+    "spec": "Ø4.1*0.15",
+    "unit": "EA",
+    "price": 15.2
+  },
+  {
+    "no": 23,
+    "code": "21311(H3)",
+    "name": "Filter support(MD파트)",
+    "spec": "Ø12",
+    "unit": "EA",
+    "price": 8.6
+  },
+  {
+    "no": 24,
+    "code": "21311(H2)",
+    "name": "Filter(MD파트)",
+    "spec": "Ø12",
+    "unit": "EA",
+    "price": 24.2
+  },
+  {
+    "no": 25,
+    "code": "B564826",
+    "name": "FILTER(모토닉)",
+    "spec": "Ø10*Ø5.5*0.3T",
+    "unit": "EA",
+    "price": 76.0
+  },
+  {
+    "no": 26,
+    "code": "A870030",
+    "name": "Flex Flux VP21S23",
+    "spec": "23mm*57㎛",
+    "unit": "EA",
+    "price": 230.0
+  },
+  {
+    "no": 27,
+    "code": "3049500",
+    "name": "GLASS CLOTH",
+    "spec": "108mm*1M",
+    "unit": "M",
+    "price": 35.0
+  },
+  {
+    "no": 28,
+    "code": "2151027",
+    "name": "GUIDE RAIL(230)L,R(중국향)",
+    "spec": "709*4*1.2T",
+    "unit": "SET",
+    "price": 1695.8
+  },
+  {
+    "no": 29,
+    "code": "2121528",
+    "name": "GUIDE RAIL(C253/353)",
+    "spec": "750*4*1.2T",
+    "unit": "EA",
+    "price": 1196.0
+  },
+  {
+    "no": 30,
+    "code": "2121577",
+    "name": "GUIDE RAIL(C330)",
+    "spec": "5*900*1.45T",
+    "unit": "EA",
+    "price": 1373.8
+  },
+  {
+    "no": 31,
+    "code": "2121720",
+    "name": "GUIDE RAIL(C49)",
+    "spec": "5*820*1.25T",
+    "unit": "EA",
+    "price": 928.7
+  },
+  {
+    "no": 32,
+    "code": "2121370",
+    "name": "GUIDE RAIL(CK100)",
+    "spec": "5*880*1.45T",
+    "unit": "EA",
+    "price": 1560.0
+  },
+  {
+    "no": 33,
+    "code": "2121699",
+    "name": "GUIDE RAIL(CL4000)",
+    "spec": "5*1020*1.0T",
+    "unit": "EA",
+    "price": 1200.0
+  },
+  {
+    "no": 34,
+    "code": "2121697",
+    "name": "GUIDE RAIL(CL75)",
+    "spec": "5*1010*1.45T",
+    "unit": "EA",
+    "price": 1800.0
+  },
+  {
+    "no": 35,
+    "code": "2121361",
+    "name": "GUIDE RAIL(CP2025)",
+    "spec": "4*730*1.45T",
+    "unit": "EA",
+    "price": 1164.8
+  },
+  {
+    "no": 36,
+    "code": "2121379",
+    "name": "GUIDE RAIL(CP3525)",
+    "spec": "3*800*1.45T",
+    "unit": "EA",
+    "price": 892.5
+  },
+  {
+    "no": 37,
+    "code": "2121967",
+    "name": "GUIDE RAIL(GRA25)",
+    "spec": "4*860*1.45T",
+    "unit": "EA",
+    "price": 2500.0
+  },
+  {
+    "no": 38,
+    "code": "1099891",
+    "name": "GUIDE RAIL(HP3600)",
+    "spec": "3*600*1.45T",
+    "unit": "EA",
+    "price": 620.0
+  },
+  {
+    "no": 39,
+    "code": "1099913",
+    "name": "GUIDE RAIL(HP4600)",
+    "spec": "5*700*1.45T",
+    "unit": "EA",
+    "price": 807.0
+  },
+  {
+    "no": 40,
+    "code": "1099912",
+    "name": "GUIDE RAIL(HP4700)",
+    "spec": "4*700*1.45T",
+    "unit": "EA",
+    "price": 863.2
+  },
+  {
+    "no": 41,
+    "code": "2121358",
+    "name": "GUIDE RAIL(HP5500)",
+    "spec": "5*800*1.45T",
+    "unit": "EA",
+    "price": 1245.0
+  },
+  {
+    "no": 42,
+    "code": "2121400",
+    "name": "GUIDE RAIL(K280)",
+    "spec": "4*800*1.0T",
+    "unit": "EA",
+    "price": 1216.8
+  },
+  {
+    "no": 43,
+    "code": "2121695",
+    "name": "GUIDE RAIL(K700)",
+    "spec": "4*1000*1.45T",
+    "unit": "EA",
+    "price": 1547.5
+  },
+  {
+    "no": 44,
+    "code": "2121864",
+    "name": "GUIDE RAIL(Ø208.6)PANTUM",
+    "spec": "4*670*1.0T",
+    "unit": "EA",
+    "price": 798.0
+  },
+  {
+    "no": 45,
+    "code": "2121808",
+    "name": "GUIDE RAIL(Ø243)",
+    "spec": "4*754*1.0T",
+    "unit": "EA",
+    "price": 735.0
+  },
+  {
+    "no": 46,
+    "code": "위해상아",
+    "name": "GUIDE RAIL(Ø250) HP향",
+    "spec": "4*770*1.25T",
+    "unit": "EA",
+    "price": 1720.0
+  },
+  {
+    "no": 47,
+    "code": "2121A22",
+    "name": "GUIDE RAIL(Ø250)PANTUM",
+    "spec": "4*777.2*1.0T",
+    "unit": "EA",
+    "price": 735.0
+  },
+  {
+    "no": 48,
+    "code": "2121829",
+    "name": "GUIDE RAIL(Ø265)베트남",
+    "spec": "4*828*1.0T",
+    "unit": "EA",
+    "price": 647.9
+  },
+  {
+    "no": 49,
+    "code": "2121962",
+    "name": "GUIDE RAIL(SS-MX4)",
+    "spec": "790*4*1.0T",
+    "unit": "EA",
+    "price": 1942.5
+  },
+  {
+    "no": 50,
+    "code": "2151024",
+    "name": "GUIDE RAIL(소)",
+    "spec": "367.5*4",
+    "unit": "EA",
+    "price": 395.2
+  },
+  {
+    "no": 51,
+    "code": "2151028",
+    "name": "GUIDE RAIL(중)160중국향",
+    "spec": "",
+    "unit": "EA",
+    "price": 380.0
+  },
+  {
+    "no": 52,
+    "code": "2151070",
+    "name": "INSULATE PAPER-D",
+    "spec": "37*85*0.2t",
+    "unit": "EA",
+    "price": 24.0
+  },
+  {
+    "no": 53,
+    "code": "B564808",
+    "name": "MEMBRANE FILTER(영도산업향)",
+    "spec": "Ø3*Ø7*0.3T",
+    "unit": "EA",
+    "price": 53.0
+  },
+  {
+    "no": 54,
+    "code": "B564831",
+    "name": "MEMBRANE합지품타발(초고통기)",
+    "spec": "Ø10.4",
+    "unit": "EA",
+    "price": 3.8
+  },
+  {
+    "no": 55,
+    "code": "BK20044",
+    "name": "PATCH",
+    "spec": "Ø2.5*Ø8",
+    "unit": "EA",
+    "price": 58.3
+  },
+  {
+    "no": 56,
+    "code": "2121639",
+    "name": "PCB 절연지",
+    "spec": "Ø35",
+    "unit": "EA",
+    "price": 28.3
+  },
+  {
+    "no": 57,
+    "code": "B294136",
+    "name": "PEEK SHEET 절단",
+    "spec": "w42*0.4t",
+    "unit": "M",
+    "price": 150.0
+  },
+  {
+    "no": 58,
+    "code": "B249102",
+    "name": "PEEK SHEET 절단",
+    "spec": "w610*0.4t",
+    "unit": "M",
+    "price": 150.0
+  },
+  {
+    "no": 59,
+    "code": "1051060",
+    "name": "PET FILM(불투명)",
+    "spec": "88mm*0.188T",
+    "unit": "M",
+    "price": 160.0
+  },
+  {
+    "no": 60,
+    "code": "SS19187",
+    "name": "PFA FILM",
+    "spec": "24.5mm*0.3T*1M",
+    "unit": "M",
+    "price": 46.0
+  },
+  {
+    "no": 61,
+    "code": "2131310",
+    "name": "PP Plate 18.5",
+    "spec": "Ø18.5*0.35T",
+    "unit": "EA",
+    "price": 28.6
+  },
+  {
+    "no": 62,
+    "code": "SS21103",
+    "name": "PTFE FILM(삼성AD향)",
+    "spec": "15mm*0.1T*50M",
+    "unit": "R/L",
+    "price": 980.0
+  },
+  {
+    "no": 63,
+    "code": "A870025",
+    "name": "PWMD-S803A M Sheet",
+    "spec": "48.0*62.1*341㎛",
+    "unit": "EA",
+    "price": 102.0
+  },
+  {
+    "no": 64,
+    "code": "A870018",
+    "name": "PWMD-S821A M-Sheet",
+    "spec": "51.8*59.3*289",
+    "unit": "EA",
+    "price": 125.0
+  },
+  {
+    "no": 65,
+    "code": "2121529",
+    "name": "REINFORCE TAPE(C253/353)",
+    "spec": "715*8*0.08T",
+    "unit": "EA",
+    "price": 350.5
+  },
+  {
+    "no": 66,
+    "code": "2121578",
+    "name": "REINFORCE TAPE(C330)",
+    "spec": "890*8*0.08T",
+    "unit": "EA",
+    "price": 416.0
+  },
+  {
+    "no": 67,
+    "code": "2121716",
+    "name": "REINFORCE TAPE(C49)",
+    "spec": "818*8*0.08T",
+    "unit": "EA",
+    "price": 390.0
+  },
+  {
+    "no": 68,
+    "code": "2121371",
+    "name": "REINFORCE TAPE(CK100)",
+    "spec": "880*8*0.08T",
+    "unit": "EA",
+    "price": 456.6
+  },
+  {
+    "no": 69,
+    "code": "2121700",
+    "name": "REINFORCE TAPE(CL4000)",
+    "spec": "6*1010*0.08T",
+    "unit": "EA",
+    "price": 390.0
+  },
+  {
+    "no": 70,
+    "code": "2121698",
+    "name": "REINFORCE TAPE(CL75)",
+    "spec": "6*985*0.08T",
+    "unit": "EA",
+    "price": 364.0
+  },
+  {
+    "no": 71,
+    "code": "2121366",
+    "name": "REINFORCE TAPE(CP2025)",
+    "spec": "754*8*0.075T",
+    "unit": "EA",
+    "price": 316.2
+  },
+  {
+    "no": 72,
+    "code": "2121564",
+    "name": "REINFORCE TAPE(CP5525)",
+    "spec": "820*6*0.08T",
+    "unit": "EA",
+    "price": 288.8
+  },
+  {
+    "no": 73,
+    "code": "2121968",
+    "name": "REINFORCE TAPE(GRA25)",
+    "spec": "865*6*0.08T",
+    "unit": "EA",
+    "price": 800.0
+  },
+  {
+    "no": 74,
+    "code": "1099892",
+    "name": "REINFORCE TAPE(HP3600)",
+    "spec": "559*7.5*0.08T",
+    "unit": "EA",
+    "price": 266.2
+  },
+  {
+    "no": 75,
+    "code": "2121401",
+    "name": "REINFORCE TAPE(K280)",
+    "spec": "774*8*0.08T",
+    "unit": "EA",
+    "price": 439.0
+  },
+  {
+    "no": 76,
+    "code": "2121576",
+    "name": "REINFORCE TAPE(K410)",
+    "spec": "774*8*0.08T",
+    "unit": "EA",
+    "price": 377.0
+  },
+  {
+    "no": 77,
+    "code": "2121696",
+    "name": "REINFORCE TAPE(K700)",
+    "spec": "11*975*0.08T",
+    "unit": "EA",
+    "price": 552.2
+  },
+  {
+    "no": 78,
+    "code": "위해상아",
+    "name": "REINFORCE TAPE(Ø250)",
+    "spec": "11*846*0.075T",
+    "unit": "EA",
+    "price": 630.0
+  },
+  {
+    "no": 79,
+    "code": "2121A23",
+    "name": "REINFORCE TAPE(Ø250)",
+    "spec": "975*11*0.08T",
+    "unit": "EA",
+    "price": 1176.0
+  },
+  {
+    "no": 80,
+    "code": "2121785",
+    "name": "REINFORCE TAPE(중국향)",
+    "spec": "375*4*0.08T",
+    "unit": "EA",
+    "price": 116.8
+  },
+  {
+    "no": 81,
+    "code": "2151025",
+    "name": "REINFORCE TAPE(중국향)",
+    "spec": "375*9*0.08T",
+    "unit": "EA",
+    "price": 150.8
+  },
+  {
+    "no": 82,
+    "code": "B564777",
+    "name": "SF FLOW(e+PTFE)",
+    "spec": "Ø10",
+    "unit": "EA",
+    "price": 10.0
+  },
+  {
+    "no": 83,
+    "code": "3049W87(MD)",
+    "name": "SF Flow스티커",
+    "spec": "Ø8*Ø10",
+    "unit": "EA",
+    "price": 5.0
+  },
+  {
+    "no": 84,
+    "code": "2121867",
+    "name": "SHEET GUIDE DAVINCI",
+    "spec": "65.2*88.5*0.3T",
+    "unit": "EA",
+    "price": 74.0
+  },
+  {
+    "no": 85,
+    "code": "2121866",
+    "name": "SHEET SUPPORT DAVINCI",
+    "spec": "10*5*0.2T",
+    "unit": "EA",
+    "price": 24.0
+  },
+  {
+    "no": 86,
+    "code": "2121795",
+    "name": "SHEET WHITE",
+    "spec": "32.4*17.3*Ø28.22",
+    "unit": "EA",
+    "price": 135.0
+  },
+  {
+    "no": 87,
+    "code": "DP사업부",
+    "name": "SLOT CAP PAD(발포실리콘)",
+    "spec": "10*25*3T",
+    "unit": "EA",
+    "price": 301.0
+  },
+  {
+    "no": 88,
+    "code": "DP사업부",
+    "name": "SLOT CAP PI TAPE",
+    "spec": "9*58*0.06T",
+    "unit": "EA",
+    "price": 250.0
+  },
+  {
+    "no": 89,
+    "code": "2092974(DP사업부)",
+    "name": "SLOT CAP PI TAPE-2",
+    "spec": "117*9*0.06T",
+    "unit": "EA",
+    "price": 350.0
+  },
+  {
+    "no": 90,
+    "code": "",
+    "name": "SPACE WASHER-1",
+    "spec": "",
+    "unit": "EA",
+    "price": 27.0
+  },
+  {
+    "no": 91,
+    "code": "",
+    "name": "SPACE WASHER-2",
+    "spec": "",
+    "unit": "EA",
+    "price": 27.0
+  },
+  {
+    "no": 92,
+    "code": "",
+    "name": "SPACE WASHER-3",
+    "spec": "",
+    "unit": "EA",
+    "price": 27.0
+  },
+  {
+    "no": 93,
+    "code": "",
+    "name": "SPACE WASHER-4",
+    "spec": "",
+    "unit": "EA",
+    "price": 27.0
+  },
+  {
+    "no": 94,
+    "code": "",
+    "name": "SPACE WASHER-5",
+    "spec": "",
+    "unit": "EA",
+    "price": 27.0
+  },
+  {
+    "no": 95,
+    "code": "",
+    "name": "SPACE WASHER-6",
+    "spec": "",
+    "unit": "EA",
+    "price": 27.0
+  },
+  {
+    "no": 96,
+    "code": "2102C31",
+    "name": "SUPPORT BAR PAD",
+    "spec": "1880*38*2T",
+    "unit": "EA",
+    "price": 3121.0
+  },
+  {
+    "no": 97,
+    "code": "DP사업부",
+    "name": "SUPPORT BAR PAD(발포실리콘)",
+    "spec": "49*49*3T",
+    "unit": "EA",
+    "price": 888.0
+  },
+  {
+    "no": 98,
+    "code": "DP사업부",
+    "name": "SUPPORT BAR PI TAPE",
+    "spec": "48*0.06T*33M",
+    "unit": "R/L",
+    "price": 101500.0
+  },
+  {
+    "no": 99,
+    "code": "B564775",
+    "name": "TAPE MEMBRANE(유니테크노향)",
+    "spec": "30*25*0.35T",
+    "unit": "EA",
+    "price": 140.5
+  },
+  {
+    "no": 100,
+    "code": "SS20126",
+    "name": "TEFLON SHEET",
+    "spec": "120*0.1T*100M",
+    "unit": "R/L",
+    "price": 2500.0
+  },
+  {
+    "no": 101,
+    "code": "G754029",
+    "name": "TEFLON SHEET",
+    "spec": "15*0.1t*50M",
+    "unit": "R/L",
+    "price": 800.0
+  },
+  {
+    "no": 102,
+    "code": "SS18067",
+    "name": "TEFLON SHEET",
+    "spec": "35*1.0T*1M",
+    "unit": "M",
+    "price": 40.0
+  },
+  {
+    "no": 103,
+    "code": "G796465",
+    "name": "TEFLON SHEET",
+    "spec": "50*0.1*183M",
+    "unit": "R/L",
+    "price": 3000.0
+  },
+  {
+    "no": 104,
+    "code": "G754122",
+    "name": "TEFLON SHEET",
+    "spec": "55*0.05*30M",
+    "unit": "R/L",
+    "price": 727.0
+  },
+  {
+    "no": 105,
+    "code": "G797322",
+    "name": "TEFLON SHEET",
+    "spec": "55*0.8T*1M",
+    "unit": "M",
+    "price": 142.0
+  },
+  {
+    "no": 106,
+    "code": "SS18066",
+    "name": "TEFLON SHEET",
+    "spec": "57*1.0T*1M",
+    "unit": "M",
+    "price": 50.0
+  },
+  {
+    "no": 107,
+    "code": "SS19117",
+    "name": "TEFLON SHEET",
+    "spec": "90*0.4T*1M",
+    "unit": "M",
+    "price": 80.0
+  },
+  {
+    "no": 108,
+    "code": "SS23182",
+    "name": "teflon sheet 슬리팅(동산화학)",
+    "spec": "w40*0.5t*1M",
+    "unit": "M",
+    "price": 150.0
+  },
+  {
+    "no": 109,
+    "code": "G753109",
+    "name": "TEFLON SHEET 절단",
+    "spec": "27mm*1.0T*1M",
+    "unit": "M",
+    "price": 55.0
+  },
+  {
+    "no": 110,
+    "code": "G753119",
+    "name": "TEFLON SHEET 절단",
+    "spec": "30mm*1.5T*1M",
+    "unit": "M",
+    "price": 55.0
+  },
+  {
+    "no": 111,
+    "code": "SS21184",
+    "name": "TEFLON SHEET(BLACK)",
+    "spec": "5.5mm",
+    "unit": "M",
+    "price": 70.0
+  },
+  {
+    "no": 112,
+    "code": "G754135",
+    "name": "TEFLON SHEET(삼성VD)",
+    "spec": "15*0.1T*50M",
+    "unit": "R/L",
+    "price": 980.0
+  },
+  {
+    "no": 113,
+    "code": "3049507",
+    "name": "TEFLON 절단",
+    "spec": "23mm*0.15t*1",
+    "unit": "M",
+    "price": 15.0
+  },
+  {
+    "no": 114,
+    "code": "3049W59",
+    "name": "TOP PLATE WASHER",
+    "spec": "spare",
+    "unit": "EA",
+    "price": 54.0
+  },
+  {
+    "no": 115,
+    "code": "B964959",
+    "name": "TOP PLATE WASHER-1",
+    "spec": "Ø10*4.5",
+    "unit": "EA",
+    "price": 54.0
+  },
+  {
+    "no": 116,
+    "code": "B964960",
+    "name": "TOP PLATE WSAHER-2",
+    "spec": "Ø10*21.5",
+    "unit": "EA",
+    "price": 54.0
+  },
+  {
+    "no": 117,
+    "code": "BK20006",
+    "name": "VENT PATCH",
+    "spec": "Ø10*Ø5.5",
+    "unit": "EA",
+    "price": 80.6
+  },
+  {
+    "no": 118,
+    "code": "BK20002",
+    "name": "VENT PATCH(AMS향)",
+    "spec": "40*19.5*0.35T",
+    "unit": "EA",
+    "price": 114.5
+  },
+  {
+    "no": 119,
+    "code": "B564807",
+    "name": "VENT PATCH(스카이비전향)",
+    "spec": "Ø5.5*Ø9",
+    "unit": "EA",
+    "price": 77.4
+  },
+  {
+    "no": 120,
+    "code": "2172005",
+    "name": "VENT PATCH(유니메딕스향)",
+    "spec": "Ø12.8*Ø63.8*0.12T",
+    "unit": "EA",
+    "price": 55.0
+  },
+  {
+    "no": 121,
+    "code": "BK20043",
+    "name": "VENT PATCH(코리아아피스향)",
+    "spec": "Ø14*0.12T",
+    "unit": "EA",
+    "price": 8.0
+  },
+  {
+    "no": 122,
+    "code": "B564805",
+    "name": "VENT PROTECTOR",
+    "spec": "Ø13*Ø17*0.34T",
+    "unit": "EA",
+    "price": 138.9
+  },
+  {
+    "no": 123,
+    "code": "B564804",
+    "name": "VENT PROTECTOR",
+    "spec": "Ø3.3*Ø7.6*0.34T",
+    "unit": "EA",
+    "price": 43.5
+  },
+  {
+    "no": 124,
+    "code": "B564810",
+    "name": "VENT STICKER(브라운앤드왓슨)",
+    "spec": "Ø2*Ø8*0.35T",
+    "unit": "EA",
+    "price": 59.7
+  },
+  {
+    "no": 125,
+    "code": "BK20047",
+    "name": "VENT(AIR)",
+    "spec": "Ø10*0.195T",
+    "unit": "EA",
+    "price": 16.1
+  },
+  {
+    "no": 126,
+    "code": "2172002",
+    "name": "VENT(MESH)플라즈맵향",
+    "spec": "10*5.5*0.35T",
+    "unit": "EA",
+    "price": 60.0
+  },
+  {
+    "no": 127,
+    "code": "DP사업부",
+    "name": "고온용 에폭시 테이프",
+    "spec": "59*38",
+    "unit": "EA",
+    "price": 771.0
+  },
+  {
+    "no": 128,
+    "code": "DP사업부",
+    "name": "고온용 에폭시 테이프",
+    "spec": "73*38",
+    "unit": "EA",
+    "price": 883.0
+  },
+  {
+    "no": 129,
+    "code": "",
+    "name": "국산테이프",
+    "spec": "100mm*50M",
+    "unit": "R/L",
+    "price": 19000.0
+  },
+  {
+    "no": 130,
+    "code": "",
+    "name": "국산테이프",
+    "spec": "210mm*50M",
+    "unit": "R/L",
+    "price": 38000.0
+  },
+  {
+    "no": 131,
+    "code": "",
+    "name": "국산테이프",
+    "spec": "250mm*50M",
+    "unit": "R/L",
+    "price": 38000.0
+  },
+  {
+    "no": 132,
+    "code": "PI",
+    "name": "그라싱이형지(0.06T)",
+    "spec": "30mm*100M",
+    "unit": "R/L",
+    "price": 2400.0
+  },
+  {
+    "no": 133,
+    "code": "PI",
+    "name": "그라싱이형지(0.06T)",
+    "spec": "40mm*100M",
+    "unit": "R/L",
+    "price": 3200.0
+  },
+  {
+    "no": 134,
+    "code": "PI",
+    "name": "그라싱이형지(0.06T)",
+    "spec": "60mm*100M",
+    "unit": "R/L",
+    "price": 4800.0
+  },
+  {
+    "no": 135,
+    "code": "",
+    "name": "내열테이프(녹색)",
+    "spec": "15mm*50M",
+    "unit": "R/L",
+    "price": 6050.0
+  },
+  {
+    "no": 136,
+    "code": "3049002",
+    "name": "멤브레인 실리콘패드",
+    "spec": "13.6*13.6*4.0T",
+    "unit": "EA",
+    "price": 115.0
+  },
+  {
+    "no": 137,
+    "code": "B564786",
+    "name": "멤브레인타발(AMS향)",
+    "spec": "Ø10.4(중통기)",
+    "unit": "EA",
+    "price": 5.7
+  },
+  {
+    "no": 138,
+    "code": "B564762",
+    "name": "멤브레인타발(C-TYPE)",
+    "spec": "Ø13.5*0.13T",
+    "unit": "EA",
+    "price": 5.7
+  },
+  {
+    "no": 139,
+    "code": "B564783",
+    "name": "멤브레인타발(DIC향)",
+    "spec": "Ø10.5",
+    "unit": "EA",
+    "price": 10.6
+  },
+  {
+    "no": 140,
+    "code": "B564745",
+    "name": "멤브레인타발(DY향)",
+    "spec": "Ø8.85",
+    "unit": "EA",
+    "price": 6.0
+  },
+  {
+    "no": 141,
+    "code": "B564771",
+    "name": "멤브레인타발(GMB용)",
+    "spec": "Ø12.5",
+    "unit": "EA",
+    "price": 10.6
+  },
+  {
+    "no": 142,
+    "code": "B564758",
+    "name": "멤브레인타발(LS AUTO)",
+    "spec": "Ø10*0.1T",
+    "unit": "EA",
+    "price": 5.7
+  },
+  {
+    "no": 143,
+    "code": "B564767",
+    "name": "멤브레인타발(SL향)",
+    "spec": "Ø10.4(저통기)",
+    "unit": "EA",
+    "price": 3.8
+  },
+  {
+    "no": 144,
+    "code": "B564766",
+    "name": "멤브레인타발(SL향)",
+    "spec": "Ø10.4(중통기)",
+    "unit": "EA",
+    "price": 4.0
+  },
+  {
+    "no": 145,
+    "code": "B564814",
+    "name": "멤브레인타발(니프코코리아)",
+    "spec": "Ø13*0.2T",
+    "unit": "EA",
+    "price": 13.1
+  },
+  {
+    "no": 146,
+    "code": "SS24165",
+    "name": "멤브레인타발(니프코코리아)",
+    "spec": "Ø13*0.2T",
+    "unit": "EA",
+    "price": 12.4
+  },
+  {
+    "no": 147,
+    "code": "B564758",
+    "name": "멤브레인타발(대성전기)",
+    "spec": "Ø10*0.1T",
+    "unit": "EA",
+    "price": 5.7
+  },
+  {
+    "no": 148,
+    "code": "B564745",
+    "name": "멤브레인타발(로우템향)",
+    "spec": "Ø17*0.2T",
+    "unit": "EA",
+    "price": 6.0
+  },
+  {
+    "no": 149,
+    "code": "B564761",
+    "name": "멤브레인타발(워셔모터)",
+    "spec": "Ø5.6",
+    "unit": "EA",
+    "price": 6.0
+  },
+  {
+    "no": 150,
+    "code": "B564819",
+    "name": "멤브레인타발(유니메딕스향)",
+    "spec": "Ø24*0.12T",
+    "unit": "",
+    "price": 33.7
+  },
+  {
+    "no": 151,
+    "code": "MD사업부",
+    "name": "바튤라벨(200)",
+    "spec": "18.1*86",
+    "unit": "EA",
+    "price": 17.0
+  },
+  {
+    "no": 152,
+    "code": "3049G35",
+    "name": "바튤라벨(400)",
+    "spec": "21.7*107.7",
+    "unit": "EA",
+    "price": 21.2
+  },
+  {
+    "no": 153,
+    "code": "3049P66",
+    "name": "박스 스티커(Ø40)",
+    "spec": "20㎖/cc",
+    "unit": "개",
+    "price": 10.6
+  },
+  {
+    "no": 154,
+    "code": "",
+    "name": "변성씨트 보빈",
+    "spec": "9.8mm용",
+    "unit": "EA",
+    "price": 2000.0
+  },
+  {
+    "no": 155,
+    "code": "G797312",
+    "name": "변성씨트9.8mm",
+    "spec": "9.8mm*0.5T*1M",
+    "unit": "M",
+    "price": 34.0
+  },
+  {
+    "no": 156,
+    "code": "2121565",
+    "name": "센싱테이프",
+    "spec": "8*9",
+    "unit": "EA",
+    "price": 25.0
+  },
+  {
+    "no": 157,
+    "code": "2121372",
+    "name": "센싱테이프(C400)",
+    "spec": "7mm*7mm",
+    "unit": "EA",
+    "price": 25.0
+  },
+  {
+    "no": 158,
+    "code": "2121367",
+    "name": "센싱테이프(CP2025)",
+    "spec": "8*9.5",
+    "unit": "EA",
+    "price": 26.0
+  },
+  {
+    "no": 159,
+    "code": "2121565",
+    "name": "센싱테이프(CP5525)",
+    "spec": "5.5*9.5",
+    "unit": "EA",
+    "price": 25.2
+  },
+  {
+    "no": 160,
+    "code": "SS23200",
+    "name": "슬리팅평가",
+    "spec": "4mm",
+    "unit": "",
+    "price": 500000.0
+  },
+  {
+    "no": 161,
+    "code": "",
+    "name": "안전주사기 휠터(일체형)",
+    "spec": "Ø4.1",
+    "unit": "EA",
+    "price": 13.0
+  },
+  {
+    "no": 162,
+    "code": "AA30007",
+    "name": "알스트롱몽쇼 필터 슬리팅",
+    "spec": "300mm",
+    "unit": "M",
+    "price": 43.33
+  },
+  {
+    "no": 163,
+    "code": "AA30004",
+    "name": "알스트롱몽쇼 필터 슬리팅",
+    "spec": "500mm",
+    "unit": "M",
+    "price": 65.0
+  },
+  {
+    "no": 164,
+    "code": "SS23182",
+    "name": "애칭 TEFLON SHEET 슬리팅",
+    "spec": "40mm*0.5T*100M",
+    "unit": "M",
+    "price": 150.0
+  },
+  {
+    "no": 165,
+    "code": "2151009",
+    "name": "절연지-C",
+    "spec": "",
+    "unit": "EA",
+    "price": 23.8
+  },
+  {
+    "no": 166,
+    "code": "",
+    "name": "주사기 실리콘 패드",
+    "spec": "5.1*5.1",
+    "unit": "EA",
+    "price": 12.0
+  },
+  {
+    "no": 167,
+    "code": "212154",
+    "name": "주사기휠터(크로바모양)",
+    "spec": "5.1*5.1",
+    "unit": "EA",
+    "price": 13.0
+  },
+  {
+    "no": 168,
+    "code": "G796966",
+    "name": "카본씨트(IVE)",
+    "spec": "4*0.08*132M",
+    "unit": "R/L",
+    "price": 2090.0
+  },
+  {
+    "no": 169,
+    "code": "G796966",
+    "name": "카본씨트(IVO)",
+    "spec": "4*0.08*132M",
+    "unit": "R/L",
+    "price": 2090.0
+  },
+  {
+    "no": 170,
+    "code": "",
+    "name": "캡톤테이프",
+    "spec": "65mm*33M",
+    "unit": "R/L",
+    "price": 102120.0
+  },
+  {
+    "no": 171,
+    "code": "2102K35",
+    "name": "캡톤테이프(P9 PANEL E TYPE)",
+    "spec": "50mm*33M",
+    "unit": "R/L",
+    "price": 87500.0
+  },
+  {
+    "no": 172,
+    "code": "SS21307",
+    "name": "테프론슬리팅",
+    "spec": "w100*0.3t",
+    "unit": "M",
+    "price": 50.0
+  },
+  {
+    "no": 173,
+    "code": "SS25177",
+    "name": "테프론슬리팅",
+    "spec": "w82*0.8t",
+    "unit": "M",
+    "price": 50.0
+  },
+  {
+    "no": 174,
+    "code": "G753079",
+    "name": "테프론타발",
+    "spec": "143*115*0.05T",
+    "unit": "EA",
+    "price": 40.0
+  },
+  {
+    "no": 175,
+    "code": "SS22036",
+    "name": "테프론타발",
+    "spec": "232*186*0.05T",
+    "unit": "EA",
+    "price": 200.0
+  },
+  {
+    "no": 176,
+    "code": "SS24264",
+    "name": "테프론합지(0.13T)",
+    "spec": "320mm",
+    "unit": "M",
+    "price": 400.0
+  },
+  {
+    "no": 177,
+    "code": "G700693",
+    "name": "테프론합지(0.13T)",
+    "spec": "600mm",
+    "unit": "M",
+    "price": 1049.4
+  },
+  {
+    "no": 178,
+    "code": "3049S61",
+    "name": "피크씨트 절단",
+    "spec": "31mm*0.4T",
+    "unit": "M",
+    "price": 150.0
+  }
+]
+</script>
+<script>
+var data = JSON.parse(document.getElementById("rawdata").textContent);
+var editIdx = -1;
+
+function n(v) {
+  if (v === null || v === undefined || v === "") return "-";
+  return Number(v).toLocaleString("ko-KR");
+}
+
+function render() {
+  var q = document.getElementById("searchInput").value.trim().toLowerCase();
+  var filtered = [];
+  for (var i = 0; i < data.length; i++) {
+    var d = data[i];
+    if (!q || (d.name||"").toLowerCase().indexOf(q) >= 0 ||
+        (d.code||"").toLowerCase().indexOf(q) >= 0 ||
+        (d.spec||"").toLowerCase().indexOf(q) >= 0) {
+      filtered.push(i);
+    }
+  }
+
+  document.getElementById("badge").textContent = data.length + "개";
+  document.getElementById("info").textContent = q
+    ? filtered.length + "개 검색됨 (전체 " + data.length + "개)"
+    : "전체 " + data.length + "개 품목";
+
+  var isEmpty = filtered.length === 0;
+  document.getElementById("empty").style.display = isEmpty ? "block" : "none";
+
+  // 모바일 카드
+  var cards = "";
+  // 데스크톱 테이블
+  var rows = "";
+
+  for (var j = 0; j < filtered.length; j++) {
+    var idx = filtered[j];
+    var d = data[idx];
+    var priceFmt = n(d.price);
+
+    // 카드
+    cards += "<div class=\"card\">";
+    cards += "<div class=\"card-top\">";
+    cards += "<div class=\"card-name\">" + (d.name || "") + "</div>";
+    cards += "<div class=\"card-price\">" + priceFmt + "원</div>";
+    cards += "</div>";
+    cards += "<div class=\"card-meta\">";
+    if (d.code) cards += "<span><span class=\"label\">코드</span>" + d.code + "</span>";
+    if (d.spec) cards += "<span><span class=\"label\">규격</span>" + d.spec + "</span>";
+    if (d.unit) cards += "<span><span class=\"label\">단위</span>" + d.unit + "</span>";
+    cards += "</div>";
+    cards += "<div class=\"card-calc\">";
+    cards += "<input type=\"number\" placeholder=\"수량\" id=\"cq" + idx + "\" min=\"0\" inputmode=\"decimal\" oninput=\"calcC(" + idx + ")\">";
+    cards += "<span class=\"eq\"> = </span>";
+    cards += "<span class=\"tot\" id=\"ct" + idx + "\">0원</span>";
+    cards += "</div>";
+    cards += "<div class=\"card-btns\">";
+    cards += "<button class=\"btn btn-edit\" onclick=\"openEdit(" + idx + ")\">수정</button>";
+    cards += "<button class=\"btn btn-del\" onclick=\"del(" + idx + ")\">삭제</button>";
+    cards += "</div>";
+    cards += "</div>";
+
+    // 테이블 행
+    rows += "<tr>";
+    rows += "<td class=\"tc-no\">" + (d.no || "") + "</td>";
+    rows += "<td class=\"tc-code\">" + (d.code || "") + "</td>";
+    rows += "<td class=\"tc-name\">" + (d.name || "") + "</td>";
+    rows += "<td class=\"tc-spec\">" + (d.spec || "") + "</td>";
+    rows += "<td class=\"tc-unit\">" + (d.unit || "") + "</td>";
+    rows += "<td class=\"tc-price\">" + priceFmt + "</td>";
+    rows += "<td class=\"tc-calc\">";
+    rows += "<input type=\"number\" class=\"tqty\" id=\"tq" + idx + "\" min=\"0\" placeholder=\"0\" oninput=\"calcT(" + idx + ")\">";
+    rows += " = <span class=\"ttot\" id=\"tt" + idx + "\">0원</span>";
+    rows += "</td>";
+    rows += "<td class=\"tc-act\">";
+    rows += "<button class=\"btn btn-edit\" onclick=\"openEdit(" + idx + ")\">수정</button>";
+    rows += "<button class=\"btn btn-del\" onclick=\"del(" + idx + ")\">삭제</button>";
+    rows += "</td>";
+    rows += "</tr>";
+  }
+
+  document.getElementById("cardList").innerHTML = isEmpty ? "" : cards;
+  document.getElementById("tbody").innerHTML = isEmpty ? "" : rows;
+}
+
+function calcC(idx) {
+  var qty = parseFloat(document.getElementById("cq" + idx).value) || 0;
+  document.getElementById("ct" + idx).textContent = n(qty * (data[idx].price || 0)) + "원";
+}
+function calcT(idx) {
+  var qty = parseFloat(document.getElementById("tq" + idx).value) || 0;
+  document.getElementById("tt" + idx).textContent = n(qty * (data[idx].price || 0)) + "원";
+}
+
+function openAdd() {
+  editIdx = -1;
+  document.getElementById("mtitle").textContent = "품목 추가";
+  ["fCode","fName","fSpec","fUnit","fPrice"].forEach(function(id) { document.getElementById(id).value = ""; });
+  document.getElementById("overlay").classList.add("show");
+  document.getElementById("fName").focus();
+}
+
+function openEdit(idx) {
+  editIdx = idx;
+  var d = data[idx];
+  document.getElementById("mtitle").textContent = "품목 수정";
+  document.getElementById("fCode").value = d.code || "";
+  document.getElementById("fName").value = d.name || "";
+  document.getElementById("fSpec").value = d.spec || "";
+  document.getElementById("fUnit").value = d.unit || "";
+  document.getElementById("fPrice").value = d.price || "";
+  document.getElementById("overlay").classList.add("show");
+}
+
+function closeModal() { document.getElementById("overlay").classList.remove("show"); }
+
+function save() {
+  var name = document.getElementById("fName").value.trim();
+  var price = document.getElementById("fPrice").value;
+  if (!name) { alert("품명을 입력해주세요."); return; }
+  if (price === "") { alert("단가를 입력해주세요."); return; }
+  var item = {
+    code: document.getElementById("fCode").value.trim(),
+    name: name,
+    spec: document.getElementById("fSpec").value.trim(),
+    unit: document.getElementById("fUnit").value.trim(),
+    price: parseFloat(price) || 0
+  };
+  if (editIdx === -1) {
+    var maxNo = 0;
+    for (var i = 0; i < data.length; i++) { if (Number(data[i].no) > maxNo) maxNo = Number(data[i].no); }
+    item.no = maxNo + 1;
+    data.push(item);
+  } else {
+    item.no = data[editIdx].no;
+    data[editIdx] = item;
+  }
+  closeModal();
+  render();
+}
+
+function del(idx) {
+  if (!confirm((data[idx].name || "") + " 삭제하시겠어요?")) return;
+  data.splice(idx, 1);
+  render();
+}
+
+function exportCSV() {
+  var BOM = "\uFEFF";
+  var lines = ['"NO","자재코드","품명","규격","단위","단가"'];
+  for (var i = 0; i < data.length; i++) {
+    var d = data[i];
+    lines.push([d.no, d.code, d.name, d.spec, d.unit, d.price].map(function(v) {
+      return '"' + (v === null || v === undefined ? "" : String(v)).replace(/"/g, '""') + '"';
+    }).join(","));
+  }
+  var blob = new Blob([BOM + lines.join("\n")], {type: "text/csv;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "상아프론테크_단가리스트.csv";
+  a.click();
+}
+
+document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
+render();
+</script>
+</body>
+</html>
