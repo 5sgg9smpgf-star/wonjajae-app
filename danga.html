@@ -7,42 +7,21 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif; background: #f0f4f8; color: #222; font-size: 14px; }
-
-/* 헤더 */
 header { background: #1a3a5c; color: white; padding: 14px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; }
 header h1 { font-size: 1.05rem; }
-.badge { background: #e8f0fe; color: #1a3a5c; border-radius: 12px; padding: 2px 9px; font-size: 0.78rem; font-weight: bold; white-space: nowrap; }
-
-/* 검색/버튼 */
-.toolbar { background: white; padding: 10px 12px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #e0e6ed; position: sticky; top: 48px; z-index: 9; }
-#searchInput { flex: 1; padding: 9px 12px; border: 1.5px solid #c7d0dc; border-radius: 8px; font-size: 0.92rem; outline: none; font-family: inherit; min-width: 0; }
+.badge { background: #e8f0fe; color: #1a3a5c; border-radius: 12px; padding: 2px 9px; font-size: 0.78rem; font-weight: bold; }
+.toolbar { background: white; padding: 10px 12px; border-bottom: 1px solid #e0e6ed; position: sticky; top: 48px; z-index: 9; }
+#searchInput { width: 100%; padding: 10px 14px; border: 1.5px solid #c7d0dc; border-radius: 8px; font-size: 0.95rem; outline: none; font-family: inherit; }
 #searchInput:focus { border-color: #1a3a5c; }
-.btn { padding: 9px 13px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: bold; font-family: inherit; white-space: nowrap; }
-.btn-add { background: #2e7d32; color: white; }
-.btn-csv { background: #1a3a5c; color: white; }
-
-/* 정보 */
 .info { padding: 6px 12px; font-size: 0.8rem; color: #666; background: #f8fafc; border-bottom: 1px solid #e8ecf0; }
-
-/* 카드 리스트 (모바일) */
 .card-list { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
 .card { background: white; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
 .card-name { font-weight: 600; font-size: 0.95rem; flex: 1; margin-right: 8px; line-height: 1.3; }
 .card-price { font-weight: bold; color: #1a3a5c; font-size: 0.95rem; white-space: nowrap; }
-.card-meta { display: flex; gap: 10px; font-size: 0.78rem; color: #777; margin-bottom: 8px; flex-wrap: wrap; }
-.card-meta span { display: flex; gap: 3px; }
-.card-meta .label { color: #aaa; }
-.card-calc { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.card-calc input { width: 80px; padding: 6px 8px; border: 1.5px solid #c7d0dc; border-radius: 6px; font-size: 0.88rem; text-align: right; font-family: inherit; outline: none; }
-.card-calc input:focus { border-color: #1a3a5c; }
-.card-calc .eq { color: #999; }
-.card-calc .tot { font-weight: bold; color: #1a3a5c; font-size: 0.92rem; }
-.card-btns { display: flex; gap: 6px; justify-content: flex-end; }
-.btn-edit { background: #e65100; color: white; font-size: 0.78rem; padding: 5px 12px; border-radius: 6px; }
-.btn-del { background: #c62828; color: white; font-size: 0.78rem; padding: 5px 12px; border-radius: 6px; }
-
-/* 데스크톱 테이블 */
+.card-meta { display: flex; gap: 10px; font-size: 0.78rem; color: #777; flex-wrap: wrap; }
+.card-meta .label { color: #bbb; margin-right: 2px; }
+.empty { text-align: center; padding: 50px; color: #bbb; }
 @media (min-width: 768px) {
   header { padding: 16px 24px; }
   header h1 { font-size: 1.2rem; }
@@ -52,7 +31,7 @@ header h1 { font-size: 1.05rem; }
   .table-wrap { display: block; padding: 16px 24px 40px; }
   table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,0.07); }
   thead tr { background: #1a3a5c; color: white; }
-  th { padding: 10px 8px; text-align: center; font-size: 0.83rem; white-space: nowrap; font-weight: 600; }
+  th { padding: 10px 8px; text-align: center; font-size: 0.83rem; white-space: nowrap; }
   td { padding: 8px; border-bottom: 1px solid #eef0f4; vertical-align: middle; font-size: 0.85rem; }
   tr:last-child td { border-bottom: none; }
   tbody tr:hover td { background: #f5f8ff; }
@@ -62,33 +41,8 @@ header h1 { font-size: 1.05rem; }
   .tc-spec { color: #666; font-size: 0.8rem; }
   .tc-unit { text-align: center; }
   .tc-price { text-align: right; font-weight: bold; color: #1a3a5c; }
-  .tc-calc { white-space: nowrap; }
-  .tc-act { text-align: center; white-space: nowrap; }
-  .tqty { width: 60px; padding: 3px 5px; border: 1px solid #c7d0dc; border-radius: 5px; text-align: right; font-size: 0.82rem; }
-  .ttot { color: #1a3a5c; font-weight: bold; margin-left: 4px; }
 }
-@media (max-width: 767px) {
-  .table-wrap { display: none; }
-}
-
-.empty { text-align: center; padding: 50px; color: #bbb; }
-
-/* 모달 */
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 50; align-items: flex-end; justify-content: center; }
-.overlay.show { display: flex; }
-.modal { background: white; border-radius: 16px 16px 0 0; padding: 24px 20px; width: 100%; max-width: 480px; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); }
-@media (min-width: 480px) {
-  .overlay { align-items: center; }
-  .modal { border-radius: 12px; max-width: 420px; }
-}
-.modal h2 { font-size: 1rem; color: #1a3a5c; margin-bottom: 16px; }
-.frow { margin-bottom: 11px; }
-.frow label { display: block; font-size: 0.8rem; color: #555; margin-bottom: 4px; font-weight: 600; }
-.frow input { width: 100%; padding: 10px 12px; border: 1.5px solid #c7d0dc; border-radius: 8px; font-size: 1rem; font-family: inherit; outline: none; }
-.frow input:focus { border-color: #1a3a5c; }
-.mact { display: flex; gap: 8px; margin-top: 16px; }
-.btn-cancel { background: #eee; color: #333; flex: 1; padding: 12px; font-size: 0.95rem; border-radius: 8px; }
-.btn-save { background: #1a3a5c; color: white; flex: 2; padding: 12px; font-size: 0.95rem; border-radius: 8px; }
+@media (max-width: 767px) { .table-wrap { display: none; } }
 </style>
 </head>
 <body>
@@ -97,44 +51,19 @@ header h1 { font-size: 1.05rem; }
   <span class="badge" id="badge">로딩중...</span>
 </header>
 <div class="toolbar">
-  <input id="searchInput" type="text" placeholder="품명, 자재코드 검색..." oninput="render()">
-  
-  
+  <input id="searchInput" type="text" placeholder="품명, 자재코드, 규격으로 검색..." oninput="render()">
 </div>
 <div class="info" id="info"></div>
-
-<!-- 모바일: 카드 -->
 <div class="card-list" id="cardList"></div>
 <div class="empty" id="empty" style="display:none">검색 결과가 없습니다.</div>
-
-<!-- 데스크톱: 테이블 -->
 <div class="table-wrap">
   <table>
     <thead>
-      <tr>
-        <th>NO</th><th>자재코드</th><th>품명</th><th>규격</th><th>단위</th><th>단가(원)</th><th>수량→금액</th><th>관리</th>
-      </tr>
+      <tr><th>NO</th><th>자재코드</th><th>품명</th><th>규격</th><th>단위</th><th>단가(원)</th></tr>
     </thead>
     <tbody id="tbody"></tbody>
   </table>
 </div>
-
-<!-- 추가/수정 모달 -->
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <h2 id="mtitle">품목 추가</h2>
-    <div class="frow"><label>자재코드</label><input id="fCode" type="text"></div>
-    <div class="frow"><label>품명 *</label><input id="fName" type="text"></div>
-    <div class="frow"><label>규격</label><input id="fSpec" type="text"></div>
-    <div class="frow"><label>단위</label><input id="fUnit" type="text"></div>
-    <div class="frow"><label>단가(원) *</label><input id="fPrice" type="number" min="0" step="0.1" inputmode="decimal"></div>
-    <div class="mact">
-      <button class="btn btn-cancel" onclick="closeModal()">취소</button>
-      <button class="btn btn-save" onclick="save()">저장</button>
-    </div>
-  </div>
-</div>
-
 <script id="rawdata" type="application/json">
 [
   {
@@ -1565,7 +1494,6 @@ header h1 { font-size: 1.05rem; }
 </script>
 <script>
 var data = JSON.parse(document.getElementById("rawdata").textContent);
-var editIdx = -1;
 
 function n(v) {
   if (v === null || v === undefined || v === "") return "-";
@@ -1583,149 +1511,38 @@ function render() {
       filtered.push(i);
     }
   }
-
   document.getElementById("badge").textContent = data.length + "개";
   document.getElementById("info").textContent = q
     ? filtered.length + "개 검색됨 (전체 " + data.length + "개)"
     : "전체 " + data.length + "개 품목";
-
   var isEmpty = filtered.length === 0;
   document.getElementById("empty").style.display = isEmpty ? "block" : "none";
-
-  // 모바일 카드
-  var cards = "";
-  // 데스크톱 테이블
-  var rows = "";
-
+  var cards = "", rows = "";
   for (var j = 0; j < filtered.length; j++) {
     var idx = filtered[j];
     var d = data[idx];
-    var priceFmt = n(d.price);
-
-    // 카드
     cards += "<div class=\"card\">";
     cards += "<div class=\"card-top\">";
     cards += "<div class=\"card-name\">" + (d.name || "") + "</div>";
-    cards += "<div class=\"card-price\">" + priceFmt + "원</div>";
+    cards += "<div class=\"card-price\">" + n(d.price) + "원</div>";
     cards += "</div>";
     cards += "<div class=\"card-meta\">";
     if (d.code) cards += "<span><span class=\"label\">코드</span>" + d.code + "</span>";
     if (d.spec) cards += "<span><span class=\"label\">규격</span>" + d.spec + "</span>";
     if (d.unit) cards += "<span><span class=\"label\">단위</span>" + d.unit + "</span>";
-    cards += "</div>";
-    cards += "<div class=\"card-calc\">";
-    cards += "<input type=\"number\" placeholder=\"수량\" id=\"cq" + idx + "\" min=\"0\" inputmode=\"decimal\" oninput=\"calcC(" + idx + ")\">";
-    cards += "<span class=\"eq\"> = </span>";
-    cards += "<span class=\"tot\" id=\"ct" + idx + "\">0원</span>";
-    cards += "</div>";
-    cards += "<div class=\"card-btns\">";
-    cards += "<button class=\"btn btn-edit\" onclick=\"openEdit(" + idx + ")\">수정</button>";
-    cards += "<button class=\"btn btn-del\" onclick=\"del(" + idx + ")\">삭제</button>";
-    cards += "</div>";
-    cards += "</div>";
-
-    // 테이블 행
+    cards += "</div></div>";
     rows += "<tr>";
     rows += "<td class=\"tc-no\">" + (d.no || "") + "</td>";
     rows += "<td class=\"tc-code\">" + (d.code || "") + "</td>";
     rows += "<td class=\"tc-name\">" + (d.name || "") + "</td>";
     rows += "<td class=\"tc-spec\">" + (d.spec || "") + "</td>";
     rows += "<td class=\"tc-unit\">" + (d.unit || "") + "</td>";
-    rows += "<td class=\"tc-price\">" + priceFmt + "</td>";
-    rows += "<td class=\"tc-calc\">";
-    rows += "<input type=\"number\" class=\"tqty\" id=\"tq" + idx + "\" min=\"0\" placeholder=\"0\" oninput=\"calcT(" + idx + ")\">";
-    rows += " = <span class=\"ttot\" id=\"tt" + idx + "\">0원</span>";
-    rows += "</td>";
-    rows += "<td class=\"tc-act\">";
-    rows += "<button class=\"btn btn-edit\" onclick=\"openEdit(" + idx + ")\">수정</button>";
-    rows += "<button class=\"btn btn-del\" onclick=\"del(" + idx + ")\">삭제</button>";
-    rows += "</td>";
+    rows += "<td class=\"tc-price\">" + n(d.price) + "</td>";
     rows += "</tr>";
   }
-
   document.getElementById("cardList").innerHTML = isEmpty ? "" : cards;
   document.getElementById("tbody").innerHTML = isEmpty ? "" : rows;
 }
-
-function calcC(idx) {
-  var qty = parseFloat(document.getElementById("cq" + idx).value) || 0;
-  document.getElementById("ct" + idx).textContent = n(qty * (data[idx].price || 0)) + "원";
-}
-function calcT(idx) {
-  var qty = parseFloat(document.getElementById("tq" + idx).value) || 0;
-  document.getElementById("tt" + idx).textContent = n(qty * (data[idx].price || 0)) + "원";
-}
-
-function openAdd() {
-  editIdx = -1;
-  document.getElementById("mtitle").textContent = "품목 추가";
-  ["fCode","fName","fSpec","fUnit","fPrice"].forEach(function(id) { document.getElementById(id).value = ""; });
-  document.getElementById("overlay").classList.add("show");
-  document.getElementById("fName").focus();
-}
-
-function openEdit(idx) {
-  editIdx = idx;
-  var d = data[idx];
-  document.getElementById("mtitle").textContent = "품목 수정";
-  document.getElementById("fCode").value = d.code || "";
-  document.getElementById("fName").value = d.name || "";
-  document.getElementById("fSpec").value = d.spec || "";
-  document.getElementById("fUnit").value = d.unit || "";
-  document.getElementById("fPrice").value = d.price || "";
-  document.getElementById("overlay").classList.add("show");
-}
-
-function closeModal() { document.getElementById("overlay").classList.remove("show"); }
-
-function save() {
-  var name = document.getElementById("fName").value.trim();
-  var price = document.getElementById("fPrice").value;
-  if (!name) { alert("품명을 입력해주세요."); return; }
-  if (price === "") { alert("단가를 입력해주세요."); return; }
-  var item = {
-    code: document.getElementById("fCode").value.trim(),
-    name: name,
-    spec: document.getElementById("fSpec").value.trim(),
-    unit: document.getElementById("fUnit").value.trim(),
-    price: parseFloat(price) || 0
-  };
-  if (editIdx === -1) {
-    var maxNo = 0;
-    for (var i = 0; i < data.length; i++) { if (Number(data[i].no) > maxNo) maxNo = Number(data[i].no); }
-    item.no = maxNo + 1;
-    data.push(item);
-  } else {
-    item.no = data[editIdx].no;
-    data[editIdx] = item;
-  }
-  closeModal();
-  render();
-}
-
-function del(idx) {
-  if (!confirm((data[idx].name || "") + " 삭제하시겠어요?")) return;
-  data.splice(idx, 1);
-  render();
-}
-
-function exportCSV() {
-  var BOM = "\uFEFF";
-  var lines = ['"NO","자재코드","품명","규격","단위","단가"'];
-  for (var i = 0; i < data.length; i++) {
-    var d = data[i];
-    lines.push([d.no, d.code, d.name, d.spec, d.unit, d.price].map(function(v) {
-      return '"' + (v === null || v === undefined ? "" : String(v)).replace(/"/g, '""') + '"';
-    }).join(","));
-  }
-  var blob = new Blob([BOM + lines.join("\n")], {type: "text/csv;charset=utf-8"});
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "상아프론테크_단가리스트.csv";
-  a.click();
-}
-
-document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
 render();
 </script>
 </body>
