@@ -18,7 +18,7 @@ header h1 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
 .sb .badge { position:absolute; top:-6px; right:-6px; background:#e53e3e; color:white; border-radius:50%; width:16px; height:16px; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700; }
 .stats { padding:10px 16px; font-size:13px; color:#666; background:white; border-bottom:1px solid #e0e0e0; }
 .list { padding:12px; display:flex; flex-direction:column; gap:10px; }
-.card { background:white; border-radius:12px; padding:14px 16px; box-shadow:0 1px 4px rgba(0,0,0,.08); cursor:pointer; }
+.card { background:white; border-radius:12px; padding:14px 16px; box-shadow:0 1px 4px rgba(0,0,0,.08); cursor:pointer; overflow:hidden; max-width:100%; }
 .ch { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
 .cno { font-size:11px; color:#999; flex-shrink:0; margin-top:2px; }
 .cp { font-size:16px; font-weight:700; color:#1a56db; flex:1; }
@@ -155,11 +155,11 @@ function render(){
       +(d.spec?'<div class="cspec">'+d.spec+'</div>':'')
       +(sqms?'<div style="font-size:14px;color:#888;margin-top:3px">'+sqms+'</div>':'')
       +((d.iy_spec||d.iy_avg||d.ja_spec||d.ja_avg||d.je_spec||d.je_avg)?
-        '<table style="margin-top:8px;font-size:13px;border-collapse:collapse;width:auto">'
-        +'<tr style="background:#f0f4ff"><th style="padding:4px 10px;text-align:left;color:#1a56db;font-weight:600;border:1px solid #dde5ff">항목</th><th style="padding:4px 10px;text-align:center;color:#1a56db;font-weight:600;border:1px solid #dde5ff">SPEC</th><th style="padding:4px 10px;text-align:center;color:#1a56db;font-weight:600;border:1px solid #dde5ff">실측</th></tr>'
-        +(d.iy_spec||d.iy_avg?'<tr><td style="padding:4px 10px;border:1px solid #eee;white-space:nowrap">이형력</td><td style="padding:4px 10px;text-align:center;border:1px solid #eee;white-space:nowrap">'+(d.iy_spec||'-')+'</td><td style="padding:4px 10px;text-align:center;border:1px solid #eee;white-space:nowrap">'+(d.iy_avg||'-')+'</td></tr>':'')
-        +(d.ja_spec||d.ja_avg?'<tr style="background:#fafafa"><td style="padding:4px 10px;border:1px solid #eee;white-space:nowrap">점착력</td><td style="padding:4px 10px;text-align:center;border:1px solid #eee;white-space:nowrap">'+(d.ja_spec||'-')+'</td><td style="padding:4px 10px;text-align:center;border:1px solid #eee;white-space:nowrap">'+(d.ja_avg||'-')+'</td></tr>':'')
-        +(d.je_spec||d.je_avg?'<tr><td style="padding:4px 10px;border:1px solid #eee;white-space:nowrap">접착력</td><td style="padding:4px 10px;text-align:center;border:1px solid #eee;white-space:nowrap">'+(d.je_spec||'-')+'</td><td style="padding:4px 10px;text-align:center;border:1px solid #eee;white-space:nowrap">'+(d.je_avg||'-')+'</td></tr>':'')
+        '<table style="margin-top:8px;font-size:13px;border-collapse:collapse;width:100%">'
+        +'<tr style="background:#f0f4ff"><th style="padding:4px 6px;text-align:left;color:#1a56db;font-weight:600;border:1px solid #dde5ff;width:20%">항목</th><th style="padding:4px 6px;text-align:center;color:#1a56db;font-weight:600;border:1px solid #dde5ff">SPEC</th><th style="padding:4px 6px;text-align:center;color:#1a56db;font-weight:600;border:1px solid #dde5ff">실측</th></tr>'
+        +(d.iy_spec||d.iy_avg?'<tr><td style="padding:4px 6px;border:1px solid #eee">이형력</td><td style="padding:4px 6px;text-align:center;border:1px solid #eee;word-break:break-all">'+(d.iy_spec||'-')+'</td><td style="padding:4px 6px;text-align:center;border:1px solid #eee">'+(d.iy_avg||'-')+'</td></tr>':'')
+        +(d.ja_spec||d.ja_avg?'<tr style="background:#fafafa"><td style="padding:4px 6px;border:1px solid #eee">점착력</td><td style="padding:4px 6px;text-align:center;border:1px solid #eee;word-break:break-all">'+(d.ja_spec||'-')+'</td><td style="padding:4px 6px;text-align:center;border:1px solid #eee">'+(d.ja_avg||'-')+'</td></tr>':'')
+        +(d.je_spec||d.je_avg?'<tr><td style="padding:4px 6px;border:1px solid #eee">접착력</td><td style="padding:4px 6px;text-align:center;border:1px solid #eee;word-break:break-all">'+(d.je_spec||'-')+'</td><td style="padding:4px 6px;text-align:center;border:1px solid #eee">'+(d.je_avg||'-')+'</td></tr>':'')
         +'</table>':'')
       +'</div>';
   }).join('');
