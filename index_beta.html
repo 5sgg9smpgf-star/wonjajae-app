@@ -47,11 +47,9 @@ header h1 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
   <h1>📦 원자재 관리</h1>
   <div class="sw">
     <input type="search" id="si" placeholder="품명·규격·구입처" oninput="render()" style="flex:3">
-    <input type="search" id="su" placeholder="사용용도" oninput="render()" style="flex:1">
-  </div>
-  <div class="sw" style="margin-top:6px">
-    <select id="sf" onchange="render()" style="flex:1;width:100%;padding:10px 12px;font-size:14px">
-      <option value="">공급사 전체</option>
+    <input type="search" id="su" placeholder="용도" oninput="render()" style="flex:1;min-width:0">
+    <select id="sf" onchange="render()" style="flex:1;min-width:0;padding:10px 6px;font-size:13px">
+      <option value="">공급사</option>
     </select>
   </div>
   <div class="sortw">
